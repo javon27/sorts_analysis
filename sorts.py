@@ -150,6 +150,19 @@ def heapify(array):
         array[(child-1)//2]=root_val       # here too, and assign saved root value
     return array
 
+############################################ BUBBLE SORT ###########################################
+def bubbleSort(A):
+    global count
+    for top in range(len(A),1,-1):
+        for i in range(1,top):
+            if A[i-1] > A[i]:
+                temp = A[i-1]
+                A[i-1] = A[i]
+                A[i] = temp
+            count += 1
+    return A
+
+
 ############################################## HELPER FUNCTIONS ##########################################
 def randomList(size):
     A = [int(size*random()) for i in range(size)]
@@ -167,15 +180,20 @@ def decreasingList(size):
 def timeIt(func, array):
     global count
     count = 0
-    start = time()
-    array = func(array)
-    end = time()
-    delta = end-start
-    print(func.__name__ + ': ' + str(delta) + ' seconds\n')
-    print('comparisons: ' + str(count) + '\n')
-    if printArray:
-        print(array)
     print('\n')
+    print(func.__name__ + '():')
+    try:
+        start = time()
+        array = func(array)
+        end = time()
+        delta = end-start
+        print(func.__name__ + ': ' + str(delta) + ' seconds\n')
+        print('comparisons: ' + str(count) + '\n')
+        if printArray:
+            print(array)
+            print('\n')
+    except RuntimeError as e:
+        print('Error running ' + func.__name__ + '(): ' + e.args[0])
 
 def checkArgs(argv):
     global printArray
@@ -245,17 +263,19 @@ def togglePrint():
 
 
 def printMenu():
+    print('\n')
     if printArray:
         print('Starting Array: '+str(Array))
-    print('\n\n')
+        print('\n')
     print('Make your selection:')
     print('1: Insertion Sort')
     print('2: Merge Sort')
     print('3: Quick Sort')
     print('4: Heap Sort')
-    print('5: Set array size (currently: '+str(x)+')')
-    print('6: Toggle array type (currently: '+arrayType+')')
-    print('7: Toggle print array (currently: '+str(printArray)+')')
+    print('5: Bubble Sort')
+    print('6: Set array size (currently: '+str(x)+')')
+    print('7: Toggle array type (currently: '+arrayType+')')
+    print('8: Toggle print array (currently: '+str(printArray)+')')
     print('0: Quit')
 
 ############################################### MAIN ############################################
@@ -272,10 +292,10 @@ def main(argv):
         try:
             userInput = int(input())
         except ValueError:
-            print("Invalid selection")
+            print("\nInvalid selection")
         else:
-            if userInput > 7 or userInput < 0:
-                print("Invalid selection")
+            if userInput > 8 or userInput < 0:
+                print("\nInvalid selection")
             elif userInput == 0:
                 print("Have a nice day!")
                 return
@@ -287,19 +307,14 @@ def main(argv):
                 timeIt(quickSort, Array[:])
             elif userInput == 4:
                 timeIt(heapSort, Array[:])
-                pass
             elif userInput == 5:
-                updateSize()
+                timeIt(bubbleSort, Array[:])
             elif userInput == 6:
+                updateSize()
+            elif userInput == 7:
                 toggleType()
-            else:
+            else:  # == 8
                 togglePrint()
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
