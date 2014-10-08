@@ -5,7 +5,7 @@ def quickSort(arr):
     if len(arr) <= 1:
         return arr
     else:
-        pivot = arr[0]
+        pivot = arr[-1]
         for i in arr:
             if i < pivot:
                 less.append(i)
