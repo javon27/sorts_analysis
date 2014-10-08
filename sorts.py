@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#Jayson Gallardo: jayson.gallardo/Zack Flowers: zackary.flowers/Josh Allen: josh.allen
 from random import random
 from time import time
 import sys
