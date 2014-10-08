@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-#Jayson Gallardo: jayson.gallardo/Zack Flowers: zackary.flowers/Josh Allen: josh.allen
+#Jayson Gallardo: jayson.gallardo
+#Zack Flowers: zackary.flowers
+#Josh Allen: josh.allen
+
 from random import random
 from time import time
 import sys
@@ -11,15 +14,6 @@ x = 100
 arrayType = 'random'
 printArray = False
 Array = []
-
-def timing(f):
-    def wrap(*args):
-        time1 = time()
-        ret = f(*args)
-        time2 = time()
-        print('{0} function took {1} ms'.format(f.__name__, (time2-time1)*1000.0))
-        return ret
-    return wrap
 
 ###################################### INSERTION SORT ####################################
 def insertionSort(A):
@@ -53,48 +47,48 @@ def MergeSort(A, p, r):
     return A
 
 
-def merge(Array, start, middle, end):
+def merge(array, start, middle, end):
     global count
-    leftHalf = Array[start:middle]
+    leftHalf = array[start:middle]
     rightPointer = middle
     b = 0
     while b < len(leftHalf) and rightPointer < end:  # both halves are not empty
-        if leftHalf[b] < Array[rightPointer]:
+        if leftHalf[b] < array[rightPointer]:
             count += 1
-            Array[start] = leftHalf[b]
+            array[start] = leftHalf[b]
             b += 1
         else:
             count += 1
-            Array[start] = Array[rightPointer]
+            array[start] = array[rightPointer]
             rightPointer += 1
         start += 1
 
     while b < len(leftHalf):
-        Array[start] = leftHalf[b]
+        array[start] = leftHalf[b]
         b += 1
         start += 1
     while rightPointer < end:
-        Array[start] = Array[rightPointer]
+        array[start] = array[rightPointer]
         rightPointer += 1
         start += 1
-    return Array
+    return array
 
 ############################################## QUICK SORT #############################################
-def quickSort(arr):
+def quickSort(array):
     global count
     less = []
     pivotList = []
     more = []
-    if len(arr) <= 1:
-        return arr
+    if len(array) <= 1:
+        return array
     else:
-        pivot = arr[-1]
-        for i in arr:
+        pivot = array[-1]
+        for i in array:
             if i < pivot:
                 count += 1
                 less.append(i)
             elif i > pivot:
-                count += 2
+                count += 2  # takes into account (if < pivot) == False
                 more.append(i)
             else:
                 count += 2
@@ -104,18 +98,17 @@ def quickSort(arr):
         return less + pivotList + more
 
 ############################################## HEAP SORT ####################################################
-def heapSort(lst):
+def heapSort(array):
+    array = heapify(array)
+    for start in range((len(array)-2)//2, -1, -1):
+        siftdown(array, start, len(array)-1)
 
-    lst = heapify(lst)
-    for start in range((len(lst)-2)//2, -1, -1):
-        siftdown(lst, start, len(lst)-1)
+    for end in range(len(array)-1, 0, -1):
+        array[end], array[0] = array[0], array[end]
+        siftdown(array, 0, end - 1)
+    return array
 
-    for end in range(len(lst)-1, 0, -1):
-        lst[end], lst[0] = lst[0], lst[end]
-        siftdown(lst, 0, end - 1)
-    return lst
-
-def siftdown(lst, start, end):
+def siftdown(array, start, end):
     global count
     root = start
     while True:
@@ -124,11 +117,11 @@ def siftdown(lst, start, end):
             count += 1
             break
         count += 1
-        if child + 1 <= end and lst[child] < lst[child + 1]:
+        if child + 1 <= end and array[child] < array[child + 1]:
             child += 1
         count += 1
-        if lst[root] < lst[child]:
-            lst[root], lst[child] = lst[child], lst[root]
+        if array[root] < array[child]:
+            array[root], array[child] = array[child], array[root]
             root = child
             count += 1
         else:
@@ -251,6 +244,7 @@ def toggleType():
         userInput = input()
         if userInput[0].lower() == 'r':
             Array = randomList(x)
+            arrayType = 'random'
             break
         elif userInput[0].lower() == 'i':
             Array = increasingList(x)
