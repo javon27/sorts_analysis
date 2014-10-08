@@ -154,13 +154,18 @@ def heapify(array):
 ############################################ BUBBLE SORT ###########################################
 def bubbleSort(A):
     global count
-    for top in range(len(A),1,-1):
+    top = len(A)
+    swap = True
+    while swap:
+        swap = False
         for i in range(1,top):
             if A[i-1] > A[i]:
+                swap = True
                 temp = A[i-1]
                 A[i-1] = A[i]
                 A[i] = temp
             count += 1
+        top -= 1
     return A
 
 
@@ -188,7 +193,7 @@ def timeIt(func, array):
         array = func(array)
         end = time()
         delta = end-start
-        print(func.__name__ + ': ' + str(delta) + ' seconds\n')
+        print('runtime: ' + str(delta) + ' seconds\n')
         print('comparisons: ' + str(count) + '\n')
         if printArray:
             print(array)
