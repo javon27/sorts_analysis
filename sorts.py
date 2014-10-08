@@ -7,7 +7,8 @@ from random import random
 from time import time
 import sys
 
-sys.setrecursionlimit(1500)  # try to get around quickSort recursion depth problem
+# try to get around quickSort recursion depth problem
+sys.setrecursionlimit(1500)
 
 count = 0
 x = 100
@@ -15,7 +16,8 @@ arrayType = 'random'
 printArray = False
 Array = []
 
-###################################### INSERTION SORT ####################################
+
+################################ INSERTION SORT ###############################
 def insertionSort(A):
     global count
     if len(A) < 2:
@@ -31,7 +33,8 @@ def insertionSort(A):
         A[j+1] = key
     return A
 
-####################################### MERGE SORT ########################################
+
+################################### MERGE SORT ################################
 def mergeSort(A):
     p = 0
     r = len(A)
@@ -73,7 +76,8 @@ def merge(array, start, middle, end):
         start += 1
     return array
 
-############################################## QUICK SORT #############################################
+
+################################### QUICK SORT ################################
 def quickSort(array):
     global count
     less = []
@@ -97,7 +101,8 @@ def quickSort(array):
         more = quickSort(more)
         return less + pivotList + more
 
-############################################## HEAP SORT ####################################################
+
+################################## HEAP SORT ##################################
 def heapSort(array):
     array = heapify(array)
     for start in range((len(array)-2)//2, -1, -1):
@@ -107,6 +112,7 @@ def heapSort(array):
         array[end], array[0] = array[0], array[end]
         siftdown(array, 0, end - 1)
     return array
+
 
 def siftdown(array, start, end):
     global count
@@ -128,30 +134,34 @@ def siftdown(array, start, end):
             count += 1
             break
 
+
 def heapify(array):
     global count
-    size=len(array)
-    for root in range((size//2)-1,-1,-1):
+    size = len(array)
+    for root in range((size//2)-1, -1, -1):
         root_val = array[root]
         child = 2*root+1
-        while(child<size):
-            if child<size-1 and array[child]>array[child+1]:
-                child+=1
-            if root_val<=array[child]:     # compare against saved root value
+        while(child < size):
+            if child < size-1 and array[child] > array[child+1]:
+                child += 1
+            if root_val <= array[child]:     # compare against saved root value
                 break
-            array[(child-1)//2]=array[child]   # find child's parent's index correctly
-            child=2*child+1
-        array[(child-1)//2]=root_val       # here too, and assign saved root value
+            # find child's parent's index correctly
+            array[(child-1)//2] = array[child]
+            child = 2*child+1
+        # here too, and assign saved root value
+        array[(child-1)//2] = root_val
     return array
 
-############################################ BUBBLE SORT ###########################################
+
+################################# BUBBLE SORT #################################
 def bubbleSort(A):
     global count
     top = len(A)
     swap = True
     while swap:
         swap = False
-        for i in range(1,top):
+        for i in range(1, top):
             if A[i-1] > A[i]:
                 swap = True
                 temp = A[i-1]
@@ -162,19 +172,22 @@ def bubbleSort(A):
     return A
 
 
-############################################## HELPER FUNCTIONS ##########################################
+############################### HELPER FUNCTIONS #############################
 def randomList(size):
     A = [int(size*random()) for i in range(size)]
     return A
+
 
 def increasingList(size):
     A = [i for i in range(size)]
     return A
 
+
 def decreasingList(size):
     A = increasingList(size)
     A = A[::-1]
     return A
+
 
 def timeIt(func, array):
     global count
@@ -193,6 +206,7 @@ def timeIt(func, array):
             print('\n')
     except RuntimeError as e:
         print('Error running ' + func.__name__ + '(): ' + e.args[0])
+
 
 def checkArgs(argv):
     global printArray
@@ -216,6 +230,7 @@ def checkArgs(argv):
                 printArray = True
             else:
                 printArray = False
+
 
 def updateSize():
     global x
@@ -257,6 +272,7 @@ def toggleType():
         else:
             print('Invalid selection')
 
+
 def togglePrint():
     global printArray
     printArray = not printArray
@@ -278,13 +294,13 @@ def printMenu():
     print('8: Toggle print array (currently: '+str(printArray)+')')
     print('0: Quit')
 
-############################################### MAIN ############################################
+
+###################################### MAIN ##################################
 def main(argv):
     global Array
     checkArgs(argv)
 
     Array = randomList(x)
-
 
     userInput = None
     while True:
