@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 from random import random
 from time import time
+import sys
+
+sys.setrecursionlimit(1500)  # try to get around quickSort recursion depth problem
+
+count = 0
+x = 100
+arrayType = 'random'
+printArray = False
+Array = []
 
 def timing(f):
     def wrap(*args):
@@ -11,20 +20,23 @@ def timing(f):
         return ret
     return wrap
 
-@timing
+###################################### INSERTION SORT ####################################
 def insertionSort(A):
+    global count
     if len(A) < 2:
         return A
     for i in range(1, len(A)):
         key = A[i]
         j = i - 1
         while j >= 0 and A[j] > key:
+            count += 1  # count comparisons
             A[j+1] = A[j]
             j -= 1
+        count += 1  # count failed comparison
         A[j+1] = key
     return A
 
-
+####################################### MERGE SORT ########################################
 def mergeSort(A):
     p = 0
     r = len(A)
@@ -40,34 +52,86 @@ def MergeSort(A, p, r):
     return A
 
 
-def merge(A, p, q, r):
-    B = A[p:q]
-    a = q
+def merge(Array, start, middle, end):
+    global count
+    leftHalf = Array[start:middle]
+    rightPointer = middle
     b = 0
-    while b < len(B) and a < r:  # both halves are not empty
-        if B[b] < A[a]:
-            A[p] = B[b]
+    while b < len(leftHalf) and rightPointer < end:  # both halves are not empty
+        if leftHalf[b] < Array[rightPointer]:
+            count += 1
+            Array[start] = leftHalf[b]
             b += 1
         else:
-            A[p] = A[a]
-            a += 1
-        p += 1
+            count += 1
+            Array[start] = Array[rightPointer]
+            rightPointer += 1
+        start += 1
 
-    while b < len(B):
-        A[p] = B[b]
+    while b < len(leftHalf):
+        Array[start] = leftHalf[b]
         b += 1
-        p += 1
-    while a < r:
-        A[p] = A[a]
-        a += 1
-        p += 1
+        start += 1
+    while rightPointer < end:
+        Array[start] = Array[rightPointer]
+        rightPointer += 1
+        start += 1
+    return Array
+
+############################################## QUICK SORT #############################################
+def quickSort(arr):
+    global count
+    less = []
+    pivotList = []
+    more = []
+    if len(arr) <= 1:
+        return arr
+    else:
+        pivot = arr[-1]
+        for i in arr:
+            if i < pivot:
+                count += 1
+                less.append(i)
+            elif i > pivot:
+                count += 2
+                more.append(i)
+            else:
+                count += 2
+                pivotList.append(i)
+        less = quickSort(less)
+        more = quickSort(more)
+        return less + pivotList + more
+
+############################################## HELPER FUNCTIONS ##########################################
+def randomList(size):
+    A = [int(size*random()) for i in range(size)]
     return A
 
+def increasingList(size):
+    A = [i for i in range(size)]
+    return A
 
-def main(argv):
-    x = 2000
-    pp = False
+def decreasingList(size):
+    A = increasingList(size)
+    A = A[::-1]
+    return A
 
+def timeIt(func, array):
+    global count
+    count = 0
+    start = time()
+    array = func(array)
+    end = time()
+    delta = end-start
+    print(func.__name__ + ': ' + str(delta) + ' seconds\n')
+    print('comparisons: ' + str(count) + '\n')
+    if printArray:
+        print(array)
+    print('\n')
+
+def checkArgs(argv):
+    global printArray
+    global x
     try:
         opts, args = getopt.getopt(argv, "hn:p:")
     except getopt.GetoptError:
@@ -84,33 +148,106 @@ def main(argv):
                 pass
         elif opt == '-p':
             if arg.lower() == 'true':
-                pp = True
+                printArray = True
             else:
-                pp = False
+                printArray = False
 
-    A = [int(x*random()) for i in range(x)]
-    B = A[:]
-    print('start')
-    if pp:
-        print(A)
+def updateSize():
+    global x
+    while True:
+        try:
+            x = int(input('Array size: '))
+            break
+        except ValueError:
+            print('Not an integer!')
+
+def toggleType():
+    global arrayType
+    global Array
+    while True:
+        print('(r)andom')
+        print('(i)ncreasing')
+        print('(d)ecreasing')
+        userInput = input()
+        if userInput[0].lower() == 'r':
+            Array = randomList(x)
+            break
+        elif userInput[0].lower() == 'i':
+            Array = increasingList(x)
+            arrayType = 'increasing'
+            break
+        elif userInput[0].lower() == 'd':
+            Array = decreasingList(x)
+            arrayType = 'decreasing'
+            break
+        else:
+            print('Invalid selection')
+
+def togglePrint():
+    global printArray
+    printArray = not printArray
+    if printArray:
+        print(Array)
+
+
+def printMenu():
+    print('\n\n')
+    print('Make your selection:')
+    print('1: Insertion Sort')
+    print('2: Merge Sort')
+    print('3: Quick Sort')
+    print('4: Heap Sort')
+    print('5: Set array size (currently: '+str(x)+')')
+    print('6: Toggle array type (currently: '+arrayType+')')
+    print('7: Toggle print array (currently: '+str(printArray)+')')
+    print('0: Quit')
+
+############################################### MAIN ############################################
+def main(argv):
+    global Array
+    checkArgs(argv)
+
+    Array = randomList(x)
+
+    if printArray:
+        print('Random Array: '+str(A))
     print('\n')
 
-    start = time()
-    A = insertionSort(A)
-    end = time()
-    delta = end-start
-    print('insertionSort:', delta)
-    if pp:
-        print(A)
-    print('\n')
+    userInput = None
+    while True:
+        printMenu()
+        try:
+            userInput = int(input())
+        except ValueError:
+            print("Invalid selection")
+        else:
+            if userInput > 7 or userInput < 0:
+                print("Invalid selection")
+            elif userInput == 0:
+                print("Have a nice day!")
+                return
+            elif userInput == 1:
+                timeIt(insertionSort, Array[:])
+            elif userInput == 2:
+                timeIt(mergeSort, Array[:])
+            elif userInput == 3:
+                timeIt(quickSort, Array[:])
+            elif userInput == 4:
+                #timeIt(heapSort, Array[:])
+                pass
+            elif userInput == 5:
+                updateSize()
+            elif userInput == 6:
+                toggleType()
+            else:
+                togglePrint()
 
-    start = time()
-    B = mergeSort(B)
-    end = time()
-    delta = end-start
-    print('mergeSort:', delta)
-    if pp:
-        print(B)
+
+
+
+
+
+
 
 if __name__ == "__main__":
     import getopt
